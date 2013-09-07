@@ -1,21 +1,28 @@
 ## ![logo](http://www.sinaimg.cn/blog/developer/wiki/LOGO_32x32.png) eweibo ![npm](https://badge.fury.io/js/eweibo.png)
 
-sdk of e.weibo.com by [turing](https://npmjs.org/~turing) 
+a express middleware and frame-mocker of e.weibo.com by [turing](https://npmjs.org/~turing) 
 
 ### Installation
 ````
 $ npm install eweibo
-// or install globally
-$ sudo npm install eweibo -g
 ````
 
 ### Example
 ````javascript
 var eweibo = require('eweibo');
+
+// use as Express middleware
+app.use(eweibo.sign);
+
+// use as admin-checker
+app.get('/admin', eweibo.admin, adminRouter);
 ````
 
 ### API
-check this file: `index.js`
+
+- eweibo.decode(rawtoken) // decode raw tokenString
+- eweibo.sign() // the middleware to decode raw tokenString
+- eweibo.admin() // the eweibo admin-checker
 
 ### Contributing
 - Fork this repo

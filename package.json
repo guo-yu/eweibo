@@ -1,7 +1,7 @@
 {
   "name": "eweibo",
   "version": "0.0.1",
-  "description": "sdk of e.weibo.com",
+  "description": "a express middleware and frame-mocker of e.weibo.com",
   "main": "index.js",
   "logo": "http://www.sinaimg.cn/blog/developer/wiki/LOGO_32x32.png",
   "scripts": {
