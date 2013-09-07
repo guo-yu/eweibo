@@ -1,8 +1,9 @@
 {
   "name": "eweibo",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "sdk of e.weibo.com",
   "main": "index.js",
+  "logo": "http://www.sinaimg.cn/blog/developer/wiki/LOGO_32x32.png",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -10,13 +11,13 @@
     "type": "git",
     "url": "https://github.com/turingou/eweibo.git"
   },
+  "bugs": {
+    "url": "https://github.com/turingou/eweibo/issues"
+  },
   "keywords": [
     "eweibo",
     "weibo"
   ],
   "author": "turing",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/turingou/eweibo/issues"
-  }
+  "license": "MIT"
 }
