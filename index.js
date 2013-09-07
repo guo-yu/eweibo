@@ -25,18 +25,27 @@ exports.decode = function(rawtoken) {
 };
 
 // wash token
-exports.sign = function(req, res, next) {
-    // 当用户已登录时才有
-    if (req.query.tokenString) {
-        res.locals.eweibo = {
-            cid: req.query.cid,
-            viewer: req.query.viewer,
-            sub_appkey: req.query.sub_appkey,
-            // 没有授权时解析不出access_token
-            token: exports.decode(req.query.tokenString)
+exports.sign = function(key, params) {
+    return function(req, res, next) {
+        // 当用户已登录时才有
+        if (req.query.tokenString) {
+            res.locals.eweibo = {
+                cid: req.query.cid,
+                viewer: req.query.viewer,
+                sub_appkey: req.query.sub_appkey,
+                // 没有授权时解析不出access_token
+                token: exports.decode(req.query.tokenString)
+            }
         }
+        res.locals.epopup = exports.popup(key, {
+            sub_appkey: req.query.sub_appkey,
+            cid: req.query.cid,
+            height: params ? params.height : null,
+            display: params ? params.display : null
+        });
+        console.log(res.locals.epopup);
+        next();
     }
-    next();
 };
 
 // 判断登录授权的用户是否是该子应用的管理员账户（是不是本账户）
@@ -56,4 +65,17 @@ exports.admin = function(req, res, next) {
     } else {
         next(new Error('not-authed'));
     }
+};
+
+// 输出授权所使用的js代码到res中
+exports.popup = function(key, params) {
+    var lib = '<script src="http://js.t.sinajs.cn/t4/enterprise/js/public/appframe/appClient.js" type="text/javascript"></script>';
+    var configs = {
+        client_id: params.sub_appkey,
+        redirect_uri: 'http://e.weibo.com/' + params.cid + '/app_' + key,
+        height: params.height ? parseInt(params.height, 10) : 120,
+        display: params.display ? params.display : "apponweibo"
+    }
+    var custom = "<script type='text/javascript'> function authLoad() { App.AuthDialog.show(" + JSON.stringify(configs) + ");} </script>";
+    return lib + custom;
 };

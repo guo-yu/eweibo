@@ -11,8 +11,8 @@ $ npm install eweibo
 ````javascript
 var eweibo = require('eweibo');
 
-// use as Express middleware
-app.use(eweibo.sign);
+// use as Express middleware by put app-key in
+app.use(eweibo.sign(1234567));
 
 // use as admin-checker
 app.get('/admin', eweibo.admin, adminRouter);
