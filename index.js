@@ -8,7 +8,7 @@
 // @author: [turing](http://guoyu.me)
 // 
 // 中间件使用方法：
-// app.use(eweibo.sign); // 对所有路由都先解析userinfo与token，传递到 res.locals.eweibo
+// app.use(eweibo.sign([key])); // 对所有路由都先解析userinfo与token，传递到 res.locals.eweibo
 // app.get('/xxx', eweibo.admin) // 对应用的后台进行判断，当前这个用户是否是安装你应用的管理员用户
 // 
 // 此框架模拟工具模拟「专业版微博框架」三种情况
@@ -16,7 +16,7 @@
 // 2. <登录但未授权的用户>：有tokenString,但无法解析出正确token(没有oauth_token对象的情况)
 // 3. <登录且授权过的用户>：有登录用户且授权了该子应用的sub_key的时候，返回正确的token对象
 // 
-// 专业版用户开发指南见；http://open.weibo.com/wiki/%E4%B8%93%E4%B8%9A%E7%89%88%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97#.E4.BC.81.E4.B8.9A.E5.BA.94.E7.94.A8.E6.8E.88.E6.9D.83.E6.9C.BA.E5.88.B6
+// [专业版用户开发指南见](http://open.weibo.com/wiki/%E4%B8%93%E4%B8%9A%E7%89%88%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97#.E4.BC.81.E4.B8.9A.E5.BA.94.E7.94.A8.E6.8E.88.E6.9D.83.E6.9C.BA.E5.88.B6)
 
 // token decoder
 exports.decode = function(rawtoken) {
@@ -43,7 +43,6 @@ exports.sign = function(key, params) {
             height: params ? params.height : null,
             display: params ? params.display : null
         });
-        console.log(res.locals.epopup);
         next();
     }
 };
@@ -79,3 +78,12 @@ exports.popup = function(key, params) {
     var custom = "<script type='text/javascript'> function authLoad() { App.AuthDialog.show(" + JSON.stringify(configs) + ");} </script>";
     return lib + custom;
 };
+
+// make fake req.query
+exports.mock = function(req, res, next) {
+    req.query.cid = 123;
+    req.query.viewer = 999999;
+    req.query.sub_appkey = 12345678;
+    req.query.tokenString = '123121212.1212121212sqw';
+    next();
+}
