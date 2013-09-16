@@ -25,17 +25,18 @@ exports.decode = function(rawtoken) {
 // Express 中间件
 exports.sign = function(key, params) {
     return function(req, res, next) {
-        // 当用户已登录时才有
+        var eweibo = {
+            cid: req.query.cid,
+            sub_appkey: req.query.sub_appkey
+        };
+        // 当用户已登录时才有res.locals.eweibo
         if (req.query.tokenString) {
             var token = exports.decode(req.query.tokenString);
-            res.locals.eweibo = {
-                auth: token.oauth_token ? true : false,
-                cid: req.query.cid,
-                viewer: req.query.viewer,
-                sub_appkey: req.query.sub_appkey,
-                token: token
-            }
+            eweibo.auth = token.oauth_token ? true : false;
+            eweibo.viewer = req.query.viewer;
+            eweibo.token = token;
         }
+        res.locals.eweibo = eweibo;
         // 授权弹窗
         res.locals.epopup = exports.popup(key, {
             sub_appkey: req.query.sub_appkey,
