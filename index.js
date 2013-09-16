@@ -15,8 +15,6 @@
 // 1. <未登录的访问者>：[根本没有tokenString，viewer也是空的未登录情况
 // 2. <登录但未授权的用户>：有tokenString,但无法解析出正确token(没有oauth_token对象的情况)
 // 3. <登录且授权过的用户>：有登录用户且授权了该子应用的sub_key的时候，返回正确的token对象
-// 
-// [专业版用户开发指南见](http://open.weibo.com/wiki/%E4%B8%93%E4%B8%9A%E7%89%88%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97#.E4.BC.81.E4.B8.9A.E5.BA.94.E7.94.A8.E6.8E.88.E6.9D.83.E6.9C.BA.E5.88.B6)
 
 // token decoder
 exports.decode = function(rawtoken) {
@@ -24,19 +22,21 @@ exports.decode = function(rawtoken) {
     return JSON.parse(new Buffer(tokenbuffer, 'base64').toString('ascii'));
 };
 
-// wash token
+// Express 中间件
 exports.sign = function(key, params) {
     return function(req, res, next) {
         // 当用户已登录时才有
         if (req.query.tokenString) {
+            var token = exports.decode(req.query.tokenString);
             res.locals.eweibo = {
+                auth: token.oauth_token ? true : false,
                 cid: req.query.cid,
                 viewer: req.query.viewer,
                 sub_appkey: req.query.sub_appkey,
-                // 没有授权时解析不出access_token
-                token: exports.decode(req.query.tokenString)
+                token: token
             }
         }
+        // 授权弹窗
         res.locals.epopup = exports.popup(key, {
             sub_appkey: req.query.sub_appkey,
             cid: req.query.cid,
